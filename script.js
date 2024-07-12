@@ -1,8 +1,20 @@
-window.onload = function (weightId, heightId) {
+window.onload = function () {
+
+    // Criação da função de revelação do formulário e ocultação do botão inicial
+    function showForms() {
+        document.getElementById('inputs-box').style.display = 'flex';
+        btn.style.display = 'none';
+    }
+
+    function clearInputs(input) {
+        input.value = '';
+        document.getElementById('imcZone').textContent = '';        
+    }
+
     // Criando a função de verificação dos valores de peso e altura inseridos
     function checkInputs(weightId, heightId) {
-        weightValue = weightId.value;
-        heightValue = heightId.value;
+        let weightValue = weightId.value;
+        let heightValue = heightId.value;
 
         if (
             // Valores nulos ou negativos
@@ -10,71 +22,65 @@ window.onload = function (weightId, heightId) {
             // Valores irrealmente grandes
             ((weightValue > 500) || (heightValue > 2.5))
         ) {
-            canCalculate = false;
+            return false;
         }
+    return true;
     }
 
-    // Criação da função de cálculo e exibição do resultado e atribuição da zona de IMC
+    // Criação da função de cálculo do IMC e atribuição da zona de IMC
     function calculateImc(weightId, heightId) {
-        if ((canCalculate === true) || (firstTime === true)) {
+        if (firstTime) {
             firstTime = false
-            weightValue = weightId.value;
-            heightValue = heightId.value;
+            return [null, '']
+        } else if (checkInputs(weightId, heightId)) {
+            let weightValue = weightId.value;
+            let heightValue = heightId.value;
         
-            imcResult = parseFloat(weightValue) / (parseFloat(heightValue) * parseFloat(heightValue));
-            document.getElementById('imc').value = imcResult.toFixed(2);
-        
+            let imcResult = parseFloat(weightValue) / (parseFloat(heightValue) * parseFloat(heightValue));
+
             if (imcResult < 18.5 && imcResult !== 0) {
-                zoneText = 'Faixa de IMC: Abaixo do peso';
+                return [imcResult.toFixed(2), 'Faixa de IMC: Abaixo do peso'];
             } else if (imcResult >= 18.5 && imcResult < 24.9) {
-                zoneText = 'Faixa de IMC: Peso normal';
+                return [imcResult.toFixed(2), 'Faixa de IMC: Peso normal'];
             } else if (imcResult >= 25 && imcResult < 29.9) {
-                zoneText = 'Faixa de IMC: Sobrepeso';
+                return [imcResult.toFixed(2), 'Faixa de IMC: Sobrepeso']
             } else if (imcResult >= 30) {
-                zoneText = 'Faixa de IMC: Obesidade';
+                return [imcResult.toFixed(2), 'Faixa de IMC: Obesidade']
             }
-        } else {
-            zoneText = 'Por favor, digite valores válidos'
         }
+        return [null, 'Por favor, digite valores válidos']
+    }
+
+    // Criação da função de exibição dos resultados dos cálculos
+    function applyResults() {
+        document.getElementById('imcZone').textContent = calculateImc(weightInput, heightInput)[1];
+        document.getElementById('imc').value = calculateImc(weightInput, heightInput)[0];
     }
 
     // Declarações das variáveis
     const weightInput = document.getElementById('weight');
     const heightInput = document.getElementById('height');
     const btn = document.getElementById('init-btn');
-    let imcResult;
-    let zoneText;
-    let weightValue;
-    let heightValue;
-    let canCalculate = true;
     let firstTime = true;
 
     // Aplicação da função de limpar o formulário ao clique
     for (let tag of document.getElementsByTagName('input')) {
         tag.addEventListener('click', function () {
-            tag.value = '';
-            document.getElementById('imcZone').textContent = '';
+            clearInputs(tag);
         })
     }
 
     // Aplicação das funções de cálculo de resultado e zona de IMC e sua exibição
     weightInput.addEventListener('focusout', function () {
-        checkInputs(weightInput, heightInput);
-        calculateImc(weightInput, heightInput);
-        document.getElementById('imcZone').textContent = zoneText;
-        canCalculate = true
+        applyResults();
     })
 
     heightInput.addEventListener('focusout', function () {
-        checkInputs(weightInput, heightInput);
-        calculateImc(weightInput, heightInput);
-        document.getElementById('imcZone').textContent = zoneText;
-        canCalculate = true
+        applyResults();
     })
 
     // Aplicação da função de exibição dos campos de formulário após o clique no botão
     btn.addEventListener('click', function () {
-        document.getElementById('inputs-box').style.display = 'flex';
-        btn.style.display = 'none';
+        showForms();
     })
 }

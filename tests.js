@@ -1,32 +1,34 @@
 // Criando as mesma função usada das aplicações e aplicando variações para os testes
-function checkInputs(weightId, heightId) {
+function checkInputs(weightValue, heightValue) {
     if (
         // Valores nulos ou negativos
-        ((weightId <= 0) || (heightId <= 0)) ||
+        ((weightValue <= 0) || (heightValue <= 0)) ||
         // Valores irrealmente grandes
-        ((weightId > 500) || (heightId > 2.5))
+        ((weightValue > 500) || (heightValue > 2.5))
     ) {
-        canCalculate = false;
+        return false;
     }
+return true;
 }
 
-function calculateImc(weightId, heightId) {
-    if (canCalculate === true) {
-        imcResult = (parseFloat(weightId) / (parseFloat(heightId) * parseFloat(heightId))).toFixed(2);
-        // document.getElementById('imc').value = imcResult.toFixed(2);
-    
+function calculateImc(weightValue, heightValue) {
+    // if (firstTime) {
+    //     firstTime = false
+    //     return [null, '']
+    if (checkInputs(weightValue, heightValue)) {
+        let imcResult = parseFloat(weightValue) / (parseFloat(heightValue) * parseFloat(heightValue));
+
         if (imcResult < 18.5 && imcResult !== 0) {
-            zoneText = 'Faixa de IMC: Abaixo do peso';
+            return [imcResult.toFixed(2), 'Faixa de IMC: Abaixo do peso'];
         } else if (imcResult >= 18.5 && imcResult < 24.9) {
-            zoneText = 'Faixa de IMC: Peso normal';
+            return [imcResult.toFixed(2), 'Faixa de IMC: Peso normal'];
         } else if (imcResult >= 25 && imcResult < 29.9) {
-            zoneText = 'Faixa de IMC: Sobrepeso';
+            return [imcResult.toFixed(2), 'Faixa de IMC: Sobrepeso'];
         } else if (imcResult >= 30) {
-            zoneText = 'Faixa de IMC: Obesidade';
+            return [imcResult.toFixed(2), 'Faixa de IMC: Obesidade'];
         }
-    } else {
-        zoneText = 'Por favor, digite valores válidos'
     }
+    return [null, 'Por favor, digite valores válidos'];
 }
 
 // Testes:
@@ -34,53 +36,37 @@ function calculateImc(weightId, heightId) {
 // Válidos:
 
 // Peso = 50kg, altura = 1,70m (Abaixo do peso)
-canCalculate = true
-checkInputs(50, 1.7)
-calculateImc(50, 1.7)
-console.log('Teste 1: ' + imcResult)
-console.log(zoneText)
-console.log()
+console.log('Teste 1: ' + calculateImc(50, 1.7)[0]);
+console.log(calculateImc(50, 1.7)[1]);
+console.log();
 
 // Peso = 60kg, altura = 1,60m (Peso normal)
-checkInputs(60, 1.6)
-calculateImc(60, 1.6)
-console.log('Teste 2: ' + imcResult)
-console.log(zoneText)
-console.log()
+console.log('Teste 2: ' + calculateImc(60, 1.6)[0]);
+console.log(calculateImc(60, 1.6)[1]);
+console.log();
 
 // Peso = 100kg, altura = 1,90m - (Sobrepeso)
-checkInputs(100, 1.9)
-calculateImc(100, 1.9)
-console.log('Teste 3: ' + imcResult)
-console.log(zoneText)
-console.log()
+console.log('Teste 3: ' + calculateImc(100, 1.9)[0]);
+console.log(calculateImc(100, 1.9)[1]);
+console.log();
 
 // Peso = 110kg, altura = 1,80m (Obesidade)
-
-checkInputs(110, 1.8)
-calculateImc(110, 1.8)
-console.log('Teste 4: ' + imcResult)
-console.log(zoneText)
-console.log()
+console.log('Teste 4: ' + calculateImc(110, 1.8)[0]);
+console.log(calculateImc(110, 1.8)[1]);
+console.log();
 
 // Inválidos:
 
 // Peso = 0kg, altura = 0m (Valores nulos)
-checkInputs(0, 0)
-calculateImc(0, 0)
-console.log('Teste 5:')
-console.log(zoneText)
-console.log()
+console.log('Teste 5:');
+console.log(calculateImc(0, 0)[1]);
+console.log();
 
 // Peso = -10kg, altura = -1m (Valores negativos)
-checkInputs(-10, -1)
-calculateImc(-10, -1)
-console.log('Teste 6:')
-console.log(zoneText)
-console.log()
+console.log('Teste 6:');
+console.log(calculateImc(-10, -1)[1]);
+console.log();
 
 // Peso = 1000kg, altura = 3m (Valores irrealmente grandes)
-checkInputs(1000, 3)
-calculateImc(1000, 3)
-console.log('Teste 7:')
-console.log(zoneText)
+console.log('Teste 7:');
+console.log(calculateImc(1000, 3)[1]);
