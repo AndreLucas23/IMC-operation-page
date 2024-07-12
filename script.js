@@ -30,8 +30,8 @@ window.onload = function () {
     // Criação da função de cálculo do IMC e atribuição da zona de IMC
     function calculateImc(weightId, heightId) {
         if (firstTime) {
-            firstTime = false
-            return [null, '']
+            firstTime = false;
+            return [null, ''];
         } else if (checkInputs(weightId, heightId)) {
             let weightValue = weightId.value;
             let heightValue = heightId.value;
@@ -43,12 +43,12 @@ window.onload = function () {
             } else if (imcResult >= 18.5 && imcResult < 24.9) {
                 return [imcResult.toFixed(2), 'Faixa de IMC: Peso normal'];
             } else if (imcResult >= 25 && imcResult < 29.9) {
-                return [imcResult.toFixed(2), 'Faixa de IMC: Sobrepeso']
+                return [imcResult.toFixed(2), 'Faixa de IMC: Sobrepeso'];
             } else if (imcResult >= 30) {
-                return [imcResult.toFixed(2), 'Faixa de IMC: Obesidade']
+                return [imcResult.toFixed(2), 'Faixa de IMC: Obesidade'];
             }
         }
-        return [null, 'Por favor, digite valores válidos']
+        return [null, 'Por favor, digite valores válidos'];
     }
 
     // Criação da função de exibição dos resultados dos cálculos
