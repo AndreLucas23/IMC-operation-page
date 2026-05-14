@@ -1,72 +1,57 @@
-// Criando as mesma função usada das aplicações e aplicando variações para os testes
-function checkInputs(weightValue, heightValue) {
-    if (
-        // Valores nulos ou negativos
-        ((weightValue <= 0) || (heightValue <= 0)) ||
-        // Valores irrealmente grandes
-        ((weightValue > 500) || (heightValue > 2.5))
-    ) {
+// As funções puras ficam separadas pra não misturar com os logs da tela
+function isValid(weight, height) {
+    // Segura os bugs: não deixa passar nada vazio, zerado ou fora da realidade
+    if (!weight || !height || weight <= 0 || height <= 0 || weight > 500 || height > 2.5) {
         return false;
     }
-return true;
+    return true;
 }
 
-function calculateImc(weightValue, heightValue) {
-    // if (firstTime) {
-    //     firstTime = false
-    //     return [null, '']
-    if (checkInputs(weightValue, heightValue)) {
-        let imcResult = parseFloat(weightValue) / (parseFloat(heightValue) * parseFloat(heightValue));
-
-        if (imcResult < 18.5 && imcResult !== 0) {
-            return [imcResult.toFixed(2), 'Faixa de IMC: Abaixo do peso'];
-        } else if (imcResult >= 18.5 && imcResult < 24.9) {
-            return [imcResult.toFixed(2), 'Faixa de IMC: Peso normal'];
-        } else if (imcResult >= 25 && imcResult < 29.9) {
-            return [imcResult.toFixed(2), 'Faixa de IMC: Sobrepeso'];
-        } else if (imcResult >= 30) {
-            return [imcResult.toFixed(2), 'Faixa de IMC: Obesidade'];
-        }
+function calculateImc(weight, height) {
+    // Se a validação barrar, já joga a mensagem de erro e aborta a missão
+    if (!isValid(weight, height)) {
+        return [null, 'Por favor, digite valores válidos'];
     }
-    return [null, 'Por favor, digite valores válidos'];
+
+    const imcResult = weight / (height * height);
+    const imcFormatted = imcResult.toFixed(2);
+
+    // Retorna as faixas direto pra evitar um milhão de "else if"
+    if (imcResult < 18.5) return [imcFormatted, 'Faixa de IMC: Abaixo do peso'];
+    if (imcResult >= 18.5 && imcResult < 24.9) return [imcFormatted, 'Faixa de IMC: Peso normal'];
+    if (imcResult >= 25 && imcResult < 29.9) return [imcFormatted, 'Faixa de IMC: Sobrepeso'];
+    
+    return [imcFormatted, 'Faixa de IMC: Obesidade'];
 }
 
-// Testes:
+// --- BATERIA DE TESTES AUTOMATIZADOS ---
 
-// Válidos:
+// Nossa listinha de testes. Se um dia precisarmos testar um caso novo, é só espetar um objeto a mais aqui.
+const testCases = [
+    { id: 1, weight: 50, height: 1.70, type: "Abaixo do peso" },
+    { id: 2, weight: 60, height: 1.60, type: "Peso normal" },
+    { id: 3, weight: 100, height: 1.90, type: "Sobrepeso" },
+    { id: 4, weight: 110, height: 1.80, type: "Obesidade" },
+    { id: 5, weight: 0, height: 0, type: "Valores nulos (Deve barrar)" },
+    { id: 6, weight: -10, height: -1, type: "Valores negativos (Deve barrar)" },
+    { id: 7, weight: 1000, height: 3, type: "Valores irreais (Deve barrar)" }
+];
 
-// Peso = 50kg, altura = 1,70m (Abaixo do peso)
-console.log('Teste 1: ' + calculateImc(50, 1.7)[0]);
-console.log(calculateImc(50, 1.7)[1]);
-console.log();
+console.log("=== INICIANDO BATERIA DE TESTES ===\n");
 
-// Peso = 60kg, altura = 1,60m (Peso normal)
-console.log('Teste 2: ' + calculateImc(60, 1.6)[0]);
-console.log(calculateImc(60, 1.6)[1]);
-console.log();
-
-// Peso = 100kg, altura = 1,90m - (Sobrepeso)
-console.log('Teste 3: ' + calculateImc(100, 1.9)[0]);
-console.log(calculateImc(100, 1.9)[1]);
-console.log();
-
-// Peso = 110kg, altura = 1,80m (Obesidade)
-console.log('Teste 4: ' + calculateImc(110, 1.8)[0]);
-console.log(calculateImc(110, 1.8)[1]);
-console.log();
-
-// Inválidos:
-
-// Peso = 0kg, altura = 0m (Valores nulos)
-console.log('Teste 5:');
-console.log(calculateImc(0, 0)[1]);
-console.log();
-
-// Peso = -10kg, altura = -1m (Valores negativos)
-console.log('Teste 6:');
-console.log(calculateImc(-10, -1)[1]);
-console.log();
-
-// Peso = 1000kg, altura = 3m (Valores irrealmente grandes)
-console.log('Teste 7:');
-console.log(calculateImc(1000, 3)[1]);
+// Passa o trator em cima do array testando um por um automaticamente
+testCases.forEach(test => {
+    // Extrai o cálculo numa paulada só e guarda em variáveis separadas
+    const [imc, message] = calculateImc(test.weight, test.height);
+    
+    // Imprime tudo bonitinho usando template literals pra facilitar a leitura no console
+    console.log(`Teste ${test.id} - Cenário: ${test.type}`);
+    console.log(`Dados Inseridos: Peso = ${test.weight}kg | Altura = ${test.height}m`);
+    
+    if (imc !== null) {
+        console.log(`Resultado OK: IMC cravou em ${imc} -> ${message}`);
+    } else {
+        console.log(`Bloqueado pelo sistema: ${message}`);
+    }
+    console.log("---------------------------------------");
+});
